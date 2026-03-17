@@ -21,6 +21,12 @@ jobs:
       uses: lukka/get-cmake@latest
       with:
         cmakeVersion: "~4.1.0"
+    - name: Install Conan
+      id: conan
+      uses: turtlebrowser/get-conan@main
+
+    - name: Conan version
+      run: echo "${{ steps.conan.outputs.version }}"
 
     - uses: actions/checkout@v4
       
