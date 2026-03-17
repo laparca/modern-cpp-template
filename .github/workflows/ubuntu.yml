@@ -17,6 +17,11 @@ jobs:
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[ci skip]')"
 
     steps:
+    - name: Get CMake and Ninja
+      uses: lukka/get-cmake@latest
+      with:
+        cmakeVersion: "~4.1.0"
+
     - uses: actions/checkout@v4
       
     - name: cache dependencies
