@@ -1,5 +1,8 @@
 set(sources
-    src/tmp.cpp
+)
+
+set(modules
+    include/project/tmp.cppm
 )
 
 set(exe_sources
@@ -8,7 +11,10 @@ set(exe_sources
 )
 
 set(headers
-    include/project/tmp.hpp
+# List of header to include
+)
+
+set(private_headers
 )
 
 set(test_sources

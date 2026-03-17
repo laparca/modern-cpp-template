@@ -1,4 +1,7 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 4.1)
+
+# THIS IS CRITICAL - Enable experimental import std support
+set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD "d0edc3af-4c50-42ea-a356-e2862fe7a444")
 
 #
 # Project details
@@ -9,6 +12,12 @@ project(
   VERSION 0.1.0
   LANGUAGES CXX
 )
+
+# USE C++23
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_SCAN_FOR_MODULES ON)
 
 #
 # Set project options
@@ -49,13 +58,6 @@ if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
 endif()
 
 #
-# Enable package managers
-#
-
-include(cmake/Conan.cmake)
-include(cmake/Vcpkg.cmake)
-
-#
 # Create library, setup header and source files
 #
 
@@ -63,12 +65,24 @@ include(cmake/Vcpkg.cmake)
 include(cmake/SourcesAndHeaders.cmake)
 
 if(${PROJECT_NAME}_BUILD_EXECUTABLE)
-  add_executable(${PROJECT_NAME} ${exe_sources})
+  add_executable(${PROJECT_NAME})
+
+  target_sources(${PROJECT_NAME}
+    PRIVATE
+      ${exe_sources}
+    PRIVATE
+      FILE_SET CXX_MODULES FILES ${modules}
+  )
 
   if(${PROJECT_NAME}_VERBOSE_OUTPUT)
     verbose_message("Found the following sources:")
     foreach(source IN LISTS exe_sources)
       verbose_message("* ${source}")
+    endforeach()
+
+    verbose_message("Found the following modules:")
+    foreach(module IN LISTS modules)
+      verbose_message("* ${module}")
     endforeach()
   endif()
 
@@ -90,12 +104,26 @@ elseif(${PROJECT_NAME}_BUILD_HEADERS_ONLY)
     foreach(header IN LIST headers)
       verbose_message("* ${header}")
     endforeach()
+
+    verbose_message("Found the following modules:")
+    foreach(module IN LISTS modules)
+      verbose_message("* ${module}")
+    endforeach()
   endif()
 else()
   add_library(
     ${PROJECT_NAME}
-    ${headers}
-    ${sources}
+  )
+
+  target_sources(${PROJECT_NAME}
+    PUBLIC
+      ${headers}
+    PRIVATE
+      ${sources}
+      ${private_headers}
+    PUBLIC
+      FILE_SET CXX_MODULES FILES
+        ${modules}
   )
 
   if(${PROJECT_NAME}_VERBOSE_OUTPUT)
@@ -107,6 +135,10 @@ else()
     foreach(header IN LISTS headers)
       verbose_message("* ${header}")
     endforeach()
+    verbose_message("Found the following modules:")
+    foreach(module IN LISTS modules)
+      verbose_message("* ${module}")
+    endforeach()
   endif()
 endif()
 
@@ -116,7 +148,12 @@ set_target_properties(
   ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}"
+  CXX_STANDARD 23
+  CXX_STANDARD_REQUIRED ON
+  CXX_EXTENSIONS OFF
+  CXX_MODULE_STD 1  # ← Without this, import std; will fail!
 )
+target_compile_options(${PROJECT_NAME} PUBLIC -fmodules-ts)
 if(${PROJECT_NAME}_BUILD_EXECUTABLE AND ${PROJECT_NAME}_ENABLE_UNIT_TESTING)
   set_target_properties(
     ${PROJECT_NAME}_LIB
@@ -124,7 +161,12 @@ if(${PROJECT_NAME}_BUILD_EXECUTABLE AND ${PROJECT_NAME}_ENABLE_UNIT_TESTING)
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
     OUTPUT_NAME ${PROJECT_NAME}
+    CXX_STANDARD 23
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF
+    CXX_MODULE_STD 1  # ← Without this, import std; will fail!
   )
+  target_compile_options(${PROJECT_NAME}_LIB PUBLIC -fmodules-ts)
 endif()
 
 message(STATUS "Added all header and implementation files.\n")
@@ -134,12 +176,12 @@ message(STATUS "Added all header and implementation files.\n")
 #
 
 if(${PROJECT_NAME}_BUILD_HEADERS_ONLY)
-  target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_17)
+  target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_23)
 else()
-  target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
+  target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_23)
 
   if(${PROJECT_NAME}_BUILD_EXECUTABLE AND ${PROJECT_NAME}_ENABLE_UNIT_TESTING)
-    target_compile_features(${PROJECT_NAME}_LIB PUBLIC cxx_std_17)
+    target_compile_features(${PROJECT_NAME}_LIB PUBLIC cxx_std_23)
   endif()
 endif()
 include(cmake/CompilerWarnings.cmake)
@@ -249,20 +291,16 @@ add_clang_format_target()
 
 include(GNUInstallDirs)
 install(
-  TARGETS
-  ${PROJECT_NAME}
-  EXPORT
-  ${PROJECT_NAME}Targets
-  LIBRARY DESTINATION
-  ${CMAKE_INSTALL_LIBDIR}
-  RUNTIME DESTINATION
-  ${CMAKE_INSTALL_BINDIR}
-  ARCHIVE DESTINATION
-  ${CMAKE_INSTALL_LIBDIR}
-  INCLUDES DESTINATION
-  include
-  PUBLIC_HEADER DESTINATION
-  include
+  TARGETS ${PROJECT_NAME}
+  EXPORT ${PROJECT_NAME}Targets
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  INCLUDES DESTINATION include
+  PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  FILE_SET HEADERS
+  FILE_SET CXX_MODULES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME_LOWERCASE}
+  CXX_MODULES_BMI
 )
 
 install(
@@ -297,12 +335,17 @@ install(
 # Install the `include` directory
 #
 
-install(
-  DIRECTORY
-  include/${PROJECT_NAME_LOWERCASE}
-  DESTINATION
-  include
-)
+if(EXISTS include/${PROJECT_NAME_LOWERCASE})
+  message(STATUS "Found the `include/${PROJECT_NAME_LOWERCASE}` directory. Installing it to the system include directory.")
+  install(
+    DIRECTORY
+    include/${PROJECT_NAME_LOWERCASE}
+    DESTINATION
+    include
+  )
+else()
+  message(WARNING "Could not find the `include/${PROJECT_NAME_LOWERCASE}` directory. Make sure to create it and add your public headers there for them to be installed correctly.")
+endif()
 
 verbose_message("Install targets successfully built. Install with `cmake --build <build_directory> --target install --config <build_config>`.")
 

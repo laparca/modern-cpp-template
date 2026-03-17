@@ -65,7 +65,7 @@ template *as-is*, meaning using the versions recommended here, then you will nee
 
 * **CMake v3.15+** - found at [https://cmake.org/](https://cmake.org/)
 
-* **C++ Compiler** - needs to support at least the **C++17** standard, i.e. *MSVC*,
+* **C++ Compiler** - needs to support at least the **C++23** standard, i.e. *MSVC*,
 *GCC*, *Clang*
 
 > ***Note:*** *You also need to be able to provide ***CMake*** a supported
