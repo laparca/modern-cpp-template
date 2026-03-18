@@ -153,7 +153,7 @@ set_target_properties(
   CXX_EXTENSIONS OFF
   CXX_MODULE_STD 1  # ← Without this, import std; will fail!
 )
-target_compile_options(${PROJECT_NAME} PUBLIC -fmodules-ts)
+target_compile_options(${PROJECT_NAME} PUBLIC -fmodules)
 if(${PROJECT_NAME}_BUILD_EXECUTABLE AND ${PROJECT_NAME}_ENABLE_UNIT_TESTING)
   set_target_properties(
     ${PROJECT_NAME}_LIB
@@ -166,7 +166,7 @@ if(${PROJECT_NAME}_BUILD_EXECUTABLE AND ${PROJECT_NAME}_ENABLE_UNIT_TESTING)
     CXX_EXTENSIONS OFF
     CXX_MODULE_STD 1  # ← Without this, import std; will fail!
   )
-  target_compile_options(${PROJECT_NAME}_LIB PUBLIC -fmodules-ts)
+  target_compile_options(${PROJECT_NAME}_LIB PUBLIC -fmodules)
 endif()
 
 message(STATUS "Added all header and implementation files.\n")
