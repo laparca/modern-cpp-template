@@ -38,7 +38,9 @@ jobs:
         brew install llvm@17
         echo "CC=/opt/homebrew/opt/llvm@17/bin/clang" >> $GITHUB_ENV
         echo "CXX=/opt/homebrew/opt/llvm@17/bin/clang++" >> $GITHUB_ENV
-        find / -name "libc++.modules.json"
+        echo "LDFLAGS='-L/opt/homebrew/opt/llvm@17/lib'"
+        echo "CPPFLAGS='-I/opt/homebrew/opt/llvm@17/include'"
+        find /opt/homebrew/ -name "libc++.modules.json" 2>/dev/null
   
     - name: Get CMake and Ninja
       uses: lukka/get-cmake@latest
