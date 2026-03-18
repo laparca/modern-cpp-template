@@ -40,8 +40,8 @@ jobs:
         echo "CXX=/opt/homebrew/Cellar/llvm@18/18.1.8/bin/clang++" >> $GITHUB_ENV
         echo "LDFLAGS='-L/opt/homebrew/Cellar/llvm@18/18.1.8/lib'" >> $GITHUB_ENV
         echo "CPPFLAGS='-I/opt/homebrew/Cellar/llvm@18/18.1.8/include'" >> $GITHUB_ENV
+        echo "CMAKE_CXX_STDLIB_MODULES_JSON='/opt/homebrew/Cellar/llvm@18/18.1.8/lib/c++/libc++.modules.json'" >> $GITHUB_ENV
         find /opt/homebrew/ -name "libc++.modules.json" 2>/dev/null
-        find /opt/homebrew/ -name clang++ 2>/dev/null
   
     - name: Get CMake and Ninja
       uses: lukka/get-cmake@latest
