@@ -60,7 +60,7 @@ jobs:
         key: ${{ runner.os }}-dependencies-${{ hashFiles('CMakeLists.txt') }}
 
     - name: configure
-      run: cmake --preset $BUILD_TYPE -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/$INSTALL_LOCATION
+      run: cmake --preset $BUILD_TYPE -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/$INSTALL_LOCATION -DCMAKE_CXX_STDLIB_MODULES_JSON=$CMAKE_CXX_STDLIB_MODULES_JSON
       
     - name: build
       run: cmake --build --preset $BUILD_TYPE -j4
