@@ -23,15 +23,21 @@ jobs:
       with:
         python-version: '3.10'
 
-    - name: Install LLVM and Clang
-      uses: KyleMayes/install-llvm-action@v2
-      with:
-        version: '17.0'
+    #- name: Install LLVM and Clang
+    #  uses: KyleMayes/install-llvm-action@v2
+    #  with:
+    #    version: '17.0'
 
-    - name: Set Clang as default
+    #- name: Set Clang as default
+    #  run: |
+    #    echo "CC=${{ env.LLVM_PATH }}/bin/clang" >> $GITHUB_ENV
+    #    echo "CXX=${{ env.LLVM_PATH }}/bin/clang++" >> $GITHUB_ENV
+
+    - name: Install Clang17
       run: |
-        echo "CC=${{ env.LLVM_PATH }}/bin/clang" >> $GITHUB_ENV
-        echo "CXX=${{ env.LLVM_PATH }}/bin/clang++" >> $GITHUB_ENV
+        brew install llvm@17
+        echo "CC=/opt/homebrew/opt/llvm@17/bin/clang" >> $GITHUB_ENV
+        echo "CXX=/opt/homebrew/opt/llvm@17/bin/clang++" >> $GITHUB_ENV
 
     - name: Get CMake and Ninja
       uses: lukka/get-cmake@latest
