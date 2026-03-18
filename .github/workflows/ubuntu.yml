@@ -17,8 +17,16 @@ jobs:
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[ci skip]')"
 
     steps:
-    - name: Get Latest GCC Snapshot
-      uses: johelegp/gcc-snapshot@v1
+    - name: Get GCC 15
+      run: |
+        sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+        sudo apt update
+        sudo apt install gcc-15 g++-15 -y
+
+    - name: Set GCC 15 as default
+      run: |
+        echo "CC=gcc-15" >> $GITHUB_ENV
+        echo "CXX=g++-15" >> $GITHUB_ENV      
 
     - name: Get CMake and Ninja
       uses: lukka/get-cmake@latest
