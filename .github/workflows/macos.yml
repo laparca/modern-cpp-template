@@ -41,6 +41,7 @@ jobs:
         echo "LDFLAGS='-L/opt/homebrew/opt/llvm@18/lib'"
         echo "CPPFLAGS='-I/opt/homebrew/opt/llvm@18/include'"
         find /opt/homebrew/ -name "libc++.modules.json" 2>/dev/null
+        find /opt/homebrew/ -name clang++ 2>/dev/null
   
     - name: Get CMake and Ninja
       uses: lukka/get-cmake@latest
