@@ -33,13 +33,13 @@ jobs:
     #    echo "CC=${{ env.LLVM_PATH }}/bin/clang" >> $GITHUB_ENV
     #    echo "CXX=${{ env.LLVM_PATH }}/bin/clang++" >> $GITHUB_ENV
 
-    - name: Install Clang17
+    - name: Install Clang18
       run: |
-        brew install llvm@17
-        echo "CC=/opt/homebrew/opt/llvm@17/bin/clang" >> $GITHUB_ENV
-        echo "CXX=/opt/homebrew/opt/llvm@17/bin/clang++" >> $GITHUB_ENV
-        echo "LDFLAGS='-L/opt/homebrew/opt/llvm@17/lib'"
-        echo "CPPFLAGS='-I/opt/homebrew/opt/llvm@17/include'"
+        brew install llvm@18
+        echo "CC=/opt/homebrew/opt/llvm@18/bin/clang" >> $GITHUB_ENV
+        echo "CXX=/opt/homebrew/opt/llvm@18/bin/clang++" >> $GITHUB_ENV
+        echo "LDFLAGS='-L/opt/homebrew/opt/llvm@18/lib'"
+        echo "CPPFLAGS='-I/opt/homebrew/opt/llvm@18/include'"
         find /opt/homebrew/ -name "libc++.modules.json" 2>/dev/null
   
     - name: Get CMake and Ninja
