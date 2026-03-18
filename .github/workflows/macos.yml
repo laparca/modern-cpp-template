@@ -36,10 +36,10 @@ jobs:
     - name: Install Clang18
       run: |
         brew install llvm@18
-        echo "CC=/opt/homebrew/opt/llvm@18/bin/clang" >> $GITHUB_ENV
-        echo "CXX=/opt/homebrew/opt/llvm@18/bin/clang++" >> $GITHUB_ENV
-        echo "LDFLAGS='-L/opt/homebrew/opt/llvm@18/lib'"
-        echo "CPPFLAGS='-I/opt/homebrew/opt/llvm@18/include'"
+        echo "CC=/opt/homebrew/Cellar/llvm@18/18.1.8/bin/clang" >> $GITHUB_ENV
+        echo "CXX=/opt/homebrew/Cellar/llvm@18/18.1.8/bin/clang++" >> $GITHUB_ENV
+        echo "LDFLAGS='-L/opt/homebrew/Cellar/llvm@18/18.1.8/lib'" >> $GITHUB_ENV
+        echo "CPPFLAGS='-I/opt/homebrew/Cellar/llvm@18/18.1.8/include'" >> $GITHUB_ENV
         find /opt/homebrew/ -name "libc++.modules.json" 2>/dev/null
         find /opt/homebrew/ -name clang++ 2>/dev/null
   
