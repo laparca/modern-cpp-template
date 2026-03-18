@@ -28,6 +28,11 @@ jobs:
       with:
         version: '17.0'
 
+    - name: Set Clang as default
+      run: |
+        echo "CC=${{ env.LLVM_PATH }}/bin/clang" >> $GITHUB_ENV
+        echo "CXX=${{ env.LLVM_PATH }}/bin/clang++" >> $GITHUB_ENV
+
     - name: Get CMake and Ninja
       uses: lukka/get-cmake@latest
       with:
