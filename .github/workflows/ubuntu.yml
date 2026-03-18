@@ -1,4 +1,4 @@
-name: Ubuntu
+name: Ubuntu GCC 15
 
 on:
   push:
@@ -26,7 +26,7 @@ jobs:
     - name: Set GCC 15 as default
       run: |
         echo "CC=gcc-15" >> $GITHUB_ENV
-        echo "CXX=g++-15" >> $GITHUB_ENV      
+        echo "CXX=g++-15" >> $GITHUB_ENV
 
     - name: Get CMake and Ninja
       uses: lukka/get-cmake@latest
@@ -41,7 +41,7 @@ jobs:
       run: echo "${{ steps.conan.outputs.version }}"
 
     - uses: actions/checkout@v4
-      
+
     - name: cache dependencies
       uses: actions/cache@v4
       id: cache
@@ -49,16 +49,9 @@ jobs:
         path: ${{ github.workspace }}/${{ env.INSTALL_LOCATION }}
         key: ${{ runner.os }}-dependencies-${{ hashFiles('CMakeLists.txt') }}
 
-#    - name: install GCC latest
-#      run: |
-#        apt-get update -y
-#        apt-get install -y build-essential wget
-#        wget --quiet https://kayari.org/gcc-latest/gcc-latest.deb
-#        dpkg -i gcc-latest.deb
-
     - name: configure
       run: cmake --preset $BUILD_TYPE -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/$INSTALL_LOCATION -DProject_ENABLE_CODE_COVERAGE=1
-      
+
     - name: build
       run: cmake --build --preset $BUILD_TYPE -j4
 
@@ -73,4 +66,3 @@ jobs:
 
     - name: install project
       run: cmake --build build --target install --preset release
-
