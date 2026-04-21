@@ -8,7 +8,7 @@ class ProjectConan(ConanFile):
 
     def requirements(self):
         if self.settings.os == "Macos" and self.settings.compiler in ["apple-clang", "clang"]:
-            self.requires("llvm-core/19.1.0")
+            self.requires("llvm-core/19.1.7")
 
     def generate(self):
         tc = CMakeToolchain(self)
