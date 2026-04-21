@@ -1,0 +1,22 @@
+include_guard(GLOBAL)
+
+function(check_and_setup_llvm_clang)
+    if(NOT APPLE)
+        return()
+    endif()
+
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+        find_package(llvm-core QUIET)
+        if(llvm-core_FOUND)
+            message(STATUS "[LLVM] Found LLVM clang for C++23 module support")
+            set(CMAKE_C_COMPILER ${LLVM_RUNTIME_LIBRARY_INTDIR}/clang CACHE FILEPATH "" FORCE)
+            set(CMAKE_CXX_COMPILER ${LLVM_RUNTIME_LIBRARY_INTDIR}/clang++ CACHE FILEPATH "" FORCE)
+        else()
+            message(WARNING "[LLVM] AppleClang detected. For C++23 modules support, install LLVM clang with:")
+            message(WARNING "    conan install . -s compiler=clang -s compiler.version=19 -s compiler.libcxx=libc++")
+            message(WARNING "Or use CMake presets: cmake --preset macos-llvm")
+        endif()
+    endif()
+endfunction()
+
+check_and_setup_llvm_clang()
