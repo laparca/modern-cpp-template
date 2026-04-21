@@ -46,7 +46,7 @@ jobs:
     - name: Get CMake and Ninja
       uses: lukka/get-cmake@latest
       with:
-        cmakeVersion: "~4.2.0"
+        cmakeVersion: "~4.3.1"
 
     - name: Install Conan
       id: conan
